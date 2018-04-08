@@ -1,0 +1,76 @@
+---
+title: "Titanic"
+author: "Maria Schreiber"
+date: "December 7, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(plyr)
+library(gridExtra)
+library(dplyr)
+```
+
+
+```{r load dataset}
+tita <- read.csv('titanic.csv')
+str(tita)
+```
+
+
+```{r drop unnecessary columns}
+drops <- c("Name","Ticket", "Cabin")
+tita <- tita[ , !(names(tita) %in% drops)]
+```
+
+
+```{r}
+names(tita)[names(tita)=="Pclass"] <- "class"
+tita$Survived <- as.factor(tita$Survived)
+```
+
+
+```{r gender bar plot}
+
+ggplot(tita, aes(Sex, fill = Survived)) + geom_bar()
+```
+
+```{r class bar plot}
+ggplot(subset(tita, !is.na(class)),
+       aes(x = class, fill = Survived)) +
+  geom_bar()
+```
+
+```{r}
+ggplot(subset(tita, Embarked != ""),
+       aes(x = Embarked, fill = Survived)) +
+  geom_bar()
+```
+
+```{r}
+ggplot(subset(tita, SibSp != ""),
+       aes(x = SibSp, fill = Survived)) +
+  geom_bar()
+
+subset(tita, SibSp==8)
+```
+
+```{r}
+ggplot(subset(tita, Parch != ""),
+       aes(x = Parch, fill = Survived)) +
+  geom_bar()
+subset(tita, Parch == 5)
+```
+
+
+```{r}
+tita$family <- tita$Parch + tita$SibSp
+ggplot(subset(tita, family != ""),
+       aes(x = family, fill = Survived)) +
+  geom_bar()
+```
+
+
+```{r}
